@@ -57,8 +57,8 @@ export const AudioSession = Platform.OS === "web"
 // code into the native bundle: exactly the same failure mode that
 // react-native-maps caused earlier (a web/native-only package reachable
 // from a shared file's module graph), and the reason the "القائمة" tab
-// (which pulls in useLiveKitRoom.ts via useActiveLives) was exiting the
-// app on native. Re-exporting them here — behind the same Platform.OS
+// (which used to pull in useLiveKitRoom.ts via useActiveLives) was exiting
+// the app on native. Re-exporting them here — behind the same Platform.OS
 // branch as everything else in this file — means every shared screen can
 // import Track/RoomEvent/DisconnectReason from this module instead.
 //

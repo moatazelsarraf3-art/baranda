@@ -177,26 +177,3 @@ export function useLiveByRoomName(roomName: string) {
   });
 }
 
-// ↔ powers a "live now" entry point — previously nothing in the app
-// actually linked to /live/[id] as a viewer at all (only /live/broadcast
-// to go live yourself, and /live/replay/[id] for ended broadcasts).
-type ActiveLive = { roomName: string; title: string | null; hostName: string | null };
-
-export function useActiveLives() {
-  return useQuery({
-    queryKey: ["activeLives"],
-    queryFn: async (): Promise<ActiveLive[]> => {
-      const { data, error } = await supabase
-        .from("lives")
-        .select("room_name, title, profiles_public!host_id(full_name)")
-        .eq("status", "live")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return ((data ?? []) as unknown as { room_name: string; title: string | null; profiles_public: { full_name: string | null } | null }[]).map((r) => ({
-        roomName: r.room_name, title: r.title, hostName: r.profiles_public?.full_name ?? null,
-      }));
-    },
-    staleTime: 10_000,
-    refetchInterval: 20_000, // ↔ no realtime subscription for this one — a plain poll is enough for a "who's live" banner
-  });
-}

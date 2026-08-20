@@ -5,7 +5,7 @@ import { Image } from "expo-image";
 import { PageTopBar } from "../../components/shared/PageTopBar";
 import { NotificationsDropdown } from "../../components/notifications/NotificationsDropdown";
 import { useNotifications } from "../../lib/hooks/useNotifications";
-import { useActiveLives } from "../../lib/hooks/useLiveKitRoom";
+import { useActiveLives } from "../../lib/hooks/useActiveLives";
 import { useCurrentUser } from "../../lib/hooks/useCurrentUser";
 import { useLanguage } from "../../lib/hooks/useLanguage";
 import { waLink } from "../../lib/whatsapp";
