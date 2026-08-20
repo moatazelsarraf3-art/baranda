@@ -60,7 +60,14 @@ export default function RootLayout() {
               <Stack.Screen name="index" />
               <Stack.Screen name="(tabs)" />
               <Stack.Screen name="live" options={{ presentation: "fullScreenModal" }} />
-              <Stack.Screen name="property/[id]" options={{ presentation: "modal" }} />
+              <Stack.Screen
+                name="property/[id]"
+                options={{
+                  presentation: "formSheet",
+                  sheetAllowedDetents: [0.86, 1],
+                  sheetGrabberVisible: true,
+                }}
+              />
               <Stack.Screen name="seller/[id]" options={{ presentation: "modal" }} />
               <Stack.Screen name="chat" options={{ presentation: "modal" }} />
               <Stack.Screen name="publish" options={{ presentation: "modal" }} />

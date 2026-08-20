@@ -25,6 +25,7 @@ import { useLogMedia } from "../../lib/hooks/useMedia";
 import { useDraftById, useDraftMutations } from "../../lib/hooks/useDrafts";
 
 const TYPES = ["شقة", "فيلا", "بنتهاوس", "تاون هاوس", "تجاري", "إداري", "طبي", "أرض"];
+const FINISH_TYPES = ["بدون تشطيب", "نصف تشطيب", "تشطيب كامل", "لوكس", "سوبر لوكس", "الترا لوكس"];
 const FEATURES = [
   "حديقة", "جراج", "أمن وحراسة", "مطبخ مجهز", "مصعد", "حمام سباحة", "تراس",
   "مفروش", "مكيف", "خط أرضي", "عداد كهرباء", "عداد مياه", "عداد غاز طبيعي",
@@ -65,6 +66,7 @@ export default function CreateListingScreen() {
   const [negotiable, setNegotiable] = useState<"yes" | "no" | "">("");
   const [features, setFeatures] = useState<Set<string>>(new Set());
   const [finishType, setFinishType] = useState("");
+  const [finishTypeOpen, setFinishTypeOpen] = useState(false);
   const [status, setStatus] = useState<"ready" | "building" | "">("");
   const [deliveryDate, setDeliveryDate] = useState("");
   const [shortTitle, setShortTitle] = useState("");
@@ -248,7 +250,6 @@ export default function CreateListingScreen() {
     if (!shortTitle.trim()) errs.add("shortTitle");
     if (!description.trim()) errs.add("description");
     if (!videoItem) errs.add("media");
-    if (!music) errs.add("music");
     if (!phone.countryIso2 || !validateAndFormatPhone(phone.localNumber, phone.countryIso2).valid) errs.add("phone");
     setErrors(errs);
     if (errs.size > 0) {
@@ -266,7 +267,10 @@ export default function CreateListingScreen() {
     setSubmitting(true);
     try {
       const cover = coverItem ?? (await generateCoverFromVideo(videoItem.url));
-      const rawMedia: MediaItem[] = cover ? [videoItem, cover] : [videoItem];
+      const rawMedia: MediaItem[] = [
+        videoItem,
+        ...(cover ? [cover] : []),
+      ];
       const uploadedMedia = await uploadLocalMedia(user.id, rawMedia);
 
       let lat: number | undefined;
@@ -447,7 +451,29 @@ export default function CreateListingScreen() {
         />
 
         <FormLabel text="نوع التشطيب" optional />
-        <FormInput value={finishType} onChangeText={setFinishType} placeholder="بدون تشطيب / نص تشطيب / لوكس / سوبر لوكس ..." />
+        <Pressable
+          style={styles.finishSelector}
+          onPress={() => setFinishTypeOpen((open) => !open)}
+        >
+          <Text style={finishType ? styles.finishSelectorText : styles.finishSelectorPlaceholder}>
+            {finishType || t("اختر نوع التشطيب")}
+          </Text>
+        </Pressable>
+        {finishTypeOpen && (
+          <View style={styles.finishOptions}>
+            {FINISH_TYPES.map((option) => (
+              <Pressable
+                key={option}
+                style={[styles.finishOption, finishType === option && styles.finishOptionActive]}
+                onPress={() => { setFinishType(option); setFinishTypeOpen(false); }}
+              >
+                <Text style={finishType === option ? styles.finishOptionActiveText : styles.finishOptionText}>
+                  {t(option)}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        )}
 
         <FormLabel text="حالة العقار" required />
         <ChipRow options={["ready", "building"]} value={status} onChange={setStatus} labels={{ ready: "جاهز للتسليم", building: "قيد الإنشاء" }} />
@@ -508,7 +534,7 @@ export default function CreateListingScreen() {
           )}
         </View>
 
-        <FormLabel text="موسيقى الإعلان" required />
+        <FormLabel text="موسيقى الإعلان" optional />
         <View style={{ gap: 8 }}>
           {MUSIC_OPTIONS.map((m) => (
             <Pressable
@@ -521,8 +547,6 @@ export default function CreateListingScreen() {
             </Pressable>
           ))}
         </View>
-        <FormError text="من فضلك اختر موسيقى بدون حقوق نشر" show={errors.has("music")} />
-
         <FormLabel text="رقم التواصل (واتساب)" required />
         <PhoneInput value={phone} onChange={setPhone} error={errors.has("phone")} />
         <FormError text="من فضلك أدخل رقم صحيح" show={errors.has("phone")} />
@@ -569,6 +593,14 @@ const styles = StyleSheet.create({
   musicItemActive: { borderColor: "#22A652", backgroundColor: "#ECFDF5" },
   musicNote: { fontSize: 16 },
   musicText: { fontSize: 12.5, fontWeight: "700", color: "#374151" },
+  finishSelector: { backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#e5e7eb", borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14 },
+  finishSelectorText: { fontSize: 13.5, color: "#111827" },
+  finishSelectorPlaceholder: { fontSize: 13.5, color: "#9ca3af" },
+  finishOptions: { backgroundColor: "white", borderWidth: 1, borderColor: "#f3f4f6", borderRadius: 10, marginTop: 4, overflow: "hidden" },
+  finishOption: { paddingVertical: 10, paddingHorizontal: 12, borderBottomWidth: 1, borderBottomColor: "#f9fafb" },
+  finishOptionActive: { backgroundColor: "#ECFDF5" },
+  finishOptionText: { fontSize: 13, color: "#374151", fontWeight: "700" },
+  finishOptionActiveText: { fontSize: 13, color: "#047857", fontWeight: "800" },
   submitBar: { flexDirection: "row", gap: 10, padding: 14, paddingBottom: 26, borderTopWidth: 1, borderTopColor: "#f3f4f6", backgroundColor: "white" },
   submitBtn: { backgroundColor: "#22A652", borderRadius: 14, paddingVertical: 15, alignItems: "center" },
   submitBtnDisabled: { backgroundColor: "#8fcaa6" },

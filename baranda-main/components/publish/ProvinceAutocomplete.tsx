@@ -27,7 +27,11 @@ export function ProvinceAutocomplete({
       {focused && suggestions.length > 0 && (
         <View style={styles.list}>
           {suggestions.map((s) => (
-            <Pressable key={s} style={styles.row} onPress={() => onChange(s)}>
+            <Pressable
+              key={s}
+              style={styles.row}
+              onPressIn={() => { onChange(s); setFocused(false); }}
+            >
               <Text style={styles.rowText}>{t(s)}</Text>
             </Pressable>
           ))}

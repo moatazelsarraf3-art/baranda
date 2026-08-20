@@ -11,7 +11,7 @@ import { ReelSeekBar } from "./ReelSeekBar";
 import { startReelMusic, stopReelMusic } from "../../lib/musicPlayer";
 import { cldOptimized, cldVideoThumbnail } from "../../lib/cloudinary";
 
-const TAB_BAR_HEIGHT = 64; // matches calc(100vh - 64px) in app-viewer.html
+const TAB_BAR_HEIGHT = 32;
 const BASE_SLIDE_MS = 4000; // ↔ currentReelSpeed default in app-viewer.html
 const LONG_PRESS_MS = 500; // ↔ setTimeout(..., 500) in startLongPress()
 
@@ -72,6 +72,9 @@ export const ReelCard = memo(function ReelCard({
   useEffect(() => {
     if (mode !== "video" || !videoRef.current) return;
     videoRef.current.setStatusAsync({ shouldPlay: isActive && !paused, rate: speed, shouldCorrectPitch: true });
+    return () => {
+      videoRef.current?.setStatusAsync({ shouldPlay: false }).catch(() => {});
+    };
   }, [isActive, paused, speed, mode]);
 
   function onVideoStatus(status: AVPlaybackStatus) {
@@ -123,6 +126,9 @@ export const ReelCard = memo(function ReelCard({
     } else {
       stopReelMusic();
     }
+    return () => {
+      stopReelMusic();
+    };
   }, [mode, property.music, property.id, isActive, paused]);
 
   function togglePause() {

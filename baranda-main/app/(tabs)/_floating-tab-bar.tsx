@@ -82,12 +82,12 @@ const styles = StyleSheet.create({
   },
   pill: {
     flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-evenly",
-    height: 60, borderRadius: 30, backgroundColor: BAR_BG,
+    height: 32, borderRadius: 16, backgroundColor: BAR_BG,
     shadowColor: "#000", shadowOpacity: 0.25, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 12,
   },
   tabBtn: { flex: 1, alignItems: "center", justifyContent: "center", height: "100%" },
   searchCircle: {
-    width: 60, height: 60, borderRadius: 30, backgroundColor: BAR_BG,
+    width: 32, height: 32, borderRadius: 16, backgroundColor: BAR_BG,
     alignItems: "center", justifyContent: "center", marginBottom: 4,
     shadowColor: "#000", shadowOpacity: 0.25, shadowRadius: 12, shadowOffset: { width: 0, height: 6 }, elevation: 12,
   },

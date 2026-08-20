@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { router } from "expo-router";
+import { useIsFocused } from "@react-navigation/native";
 import { View, FlatList, StyleSheet, ViewToken, useWindowDimensions, Share, ListRenderItemInfo } from "react-native";
 import { usePaginatedProperties, usePropertiesByIds, PropertyPageFilters } from "../../lib/hooks/useProperties";
 import { fmtPrice } from "../../lib/types";
@@ -20,13 +21,14 @@ import { useLanguage } from "../../lib/hooks/useLanguage";
 import { Property } from "../../lib/types";
 import Svg, { Path } from "react-native-svg";
 
-const TAB_BAR_HEIGHT = 64;
+const TAB_BAR_HEIGHT = 32;
 
 // ↔ getOrderedReels() sorts by engagementScore then shuffles the rest.
 // Deferred: real engagement-based ordering + shuffle, and the `lives`
 // row prepended to the feed (renderLiveReel) — comes with wiring live
 // discovery into the feed itself (separate from the live screens already built).
 export default function ReelsScreen() {
+  const isFocused = useIsFocused();
   const { height: windowHeight } = useWindowDimensions();
   const reelHeight = windowHeight - TAB_BAR_HEIGHT;
   const { t } = useLanguage();
@@ -173,7 +175,7 @@ export default function ReelsScreen() {
       <ReelCard
         property={item}
         index={index}
-        isActive={index === activeIndex}
+        isActive={isFocused && index === activeIndex}
         isNearActive={Math.abs(index - activeIndex) <= 1}
         isFollowing={followedIds.has(item.seller.id)}
         isFavorite={favoriteProperties.has(item.id)}

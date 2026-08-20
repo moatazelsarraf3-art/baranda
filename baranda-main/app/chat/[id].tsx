@@ -17,12 +17,14 @@ import { ReelBackground } from "../../components/reel/ReelBackground";
 import { useLanguage } from "../../lib/hooks/useLanguage";
 import { openExternalUrl } from "../../lib/linking";
 import { phoneToWaMeDigits } from "../../lib/phone";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const MAX_IMAGES = 10; // ↔ maxImages in handleChatImageUpload()
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useLanguage();
+  const insets = useSafeAreaInsets();
   const { user } = useCurrentUser();
   const logMedia = useLogMedia();
   const { data: chats = [] } = useChatList(user?.id);
@@ -184,7 +186,7 @@ export default function ChatScreen() {
         </View>
       )}
 
-      <View style={styles.inputArea}>
+      <View style={[styles.inputArea, { paddingBottom: Math.max(10, insets.bottom + 6) }]}>
         <Pressable style={styles.attachBtn} onPress={pickImages} hitSlop={6}>
           <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#22A652" strokeWidth={2}>
             <Path d="M21.44 11.05l-9.19 9.19a5 5 0 01-7.07-7.07l9.19-9.19a3 3 0 014.24 4.24l-9.2 9.19a1 1 0 01-1.41-1.41l8.49-8.48" />
